@@ -48,7 +48,7 @@
                 </tr>
               </table>
             </td>
-            <ng-container *ngFor="let category of categories; let mCategory = index">
+            <ng-container *ngFor="let category of categories; let cCategory = index">
               <ng-container *ngIf="(category.primary && category.top)">
                 <ng-container *ngFor="let option of category.options; let col = index">
                   <td>
@@ -56,8 +56,16 @@
                       <ng-container *ngFor="let category of categories; let categoryIndex = index">
                         <ng-container *ngIf="(category.primary && !category.top)">
                           <ng-container *ngFor="let option of category.options; let row = index">
-                            <tr>
+                            <tr class="values">
                               <td
+                                (dblclick)="toggleUnActive(row, col + ((categoryIndex - 1) * category.options.length))"
+                                (click)="toggleActive(row, col + ((categoryIndex - 1) * category.options.length))"
+                                [ngClass]="{
+                                  'active': row === file || col + ((categoryIndex - 1) * category.options.length) === column,
+                                  'hide': (col + ((categoryIndex - 1) * category.options.length) > 9 && row > 4) || (col + ((categoryIndex - 1) * category.options.length) > 4 && row > 9),
+                                  'selected': selecteds[row] && selecteds[row] && selecteds[row][col + ((categoryIndex - 1) * category.options.length)] || false,
+                                  'notHere': empties[row] && empties[row][col + ((categoryIndex - 1) * category.options.length)] || false
+                                }"
                                 (mouseenter)="moveOverCell(row, col + ((categoryIndex - 1) * category.options.length))"
                               >
                                 A
@@ -76,9 +84,17 @@
                     <table>
                       <ng-container *ngFor="let option of category.options; let row = index">
                         <ng-container *ngIf="(!category.primary)">
-                            <tr>
+                            <tr class="values">
                               <td
-                                (mouseenter)="moveOverCell(row, col + (mCategory * categories[0].options.length))"
+                                (dblclick)="toggleUnActive(row, cCategory * categories[0].options.length + col)"
+                                (click)="toggleActive(row, cCategory * categories[0].options.length + col)"
+                                [ngClass]="{
+                                  'active': row === file || cCategory * categories[0].options.length + col === column,
+                                  'hide': (cCategory * categories[0].options.length + col > 9 && row > 4) ||  (cCategory * categories[0].options.length + col > 4 && row > 9),
+                                  'selected': selecteds[row] && selecteds[row][cCategory * categories[0].options.length + col] || false,
+                                  'notHere': empties[row] && empties[row][cCategory * categories[0].options.length + col] || false
+                                 }"
+                                (mouseenter)="moveOverCell(row, cCategory * categories[0].options.length + col)"
                               >
                                 A
                               </td>
@@ -93,7 +109,7 @@
           </tr>
         </ng-container>
       </ng-container>
-      <ng-container *ngFor="let category of categories | reverse"> <!-- left not primary -->
+      <ng-container *ngFor="let category of categories | reverse; let cat = index"> <!-- left not primary -->
         <ng-container *ngIf="(!category.primary)">
           <tr>
             <td class="headers left" [attr.rowspan]="1"><span>{{category.text}}</span></td>
@@ -104,7 +120,7 @@
                 </tr>
               </table>
             </td>
-            <ng-container *ngFor="let category of categories">
+            <ng-container *ngFor="let category of categories; let mCategory = index">
               <ng-container *ngIf="(category.primary && category.top)">
                 <ng-container *ngFor="let option of category.options; let col = index">
                   <td>
@@ -112,9 +128,17 @@
                       <ng-container *ngFor="let category of categories; let categoryIndex = index">
                         <ng-container *ngIf="(category.primary && !category.top)">
                           <ng-container *ngFor="let option of category.options; let row = index;">
-                            <tr>
+                            <tr class="values">
                               <td
-                                (mouseenter)="moveOverCell((categoryIndex), 0)"
+                                (dblclick)="toggleUnActive((cat + 1) * category.options.length + row, col + ((categoryIndex - 1) * category.options.length))"
+                                (click)="toggleActive((cat + 1) * category.options.length + row, col + ((categoryIndex - 1) * category.options.length))"
+                                [ngClass]="{
+                                  'active': (cat + 1) * category.options.length + row === file || col + ((categoryIndex - 1) * category.options.length) === column,
+                                  'hide': (col + ((categoryIndex - 1) * category.options.length) > 9 && (cat + 1) * category.options.length + row > 4) || (col + ((categoryIndex - 1) * category.options.length) > 4 && (cat + 1) * category.options.length + row > 9),
+                                  'selected': selecteds[(cat + 1) * category.options.length + row] && selecteds[(cat + 1) * category.options.length + row][col + ((categoryIndex - 1) * category.options.length)] || false,
+                                  'notHere': empties[(cat + 1) * category.options.length + row] && empties[(cat + 1) * category.options.length + row][col + ((categoryIndex - 1) * category.options.length)] || false
+                                 }"
+                                (mouseenter)="moveOverCell((cat + 1) * category.options.length + row, col + ((categoryIndex - 1) * category.options.length))"
                               >A</td>
                             </tr>
                           </ng-container>
@@ -125,13 +149,25 @@
                 </ng-container>
               </ng-container>
               <ng-container *ngIf="(!category.primary)">
-                <ng-container *ngFor="let option of category.options">
+                <ng-container *ngFor="let option of category.options; let col = index">
                   <td>
                     <table>
-                      <ng-container *ngFor="let option of category.options">
+                      <ng-container *ngFor="let option of category.options; let row = index">
                         <ng-container *ngIf="(!category.primary)">
-                          <tr>
-                            <td>A</td>
+                          <tr class="values">
+                            <td
+                                (dblclick)="toggleUnActive((cat + 1) * categories[0].options.length + row, col + (mCategory * categories[0].options.length))"
+                                (click)="toggleActive((cat + 1) * categories[0].options.length + row, col + (mCategory * categories[0].options.length))"
+                                (mouseenter)="moveOverCell((cat + 1) * categories[0].options.length + row, col + (mCategory * categories[0].options.length))"
+                                [ngClass]="{
+                                  'hide': (col + (mCategory * categories[0].options.length) > 9 && (cat + 1) * categories[0].options.length + row > 4) || (col + (mCategory * categories[0].options.length) > 4 && (cat + 1) * categories[0].options.length + row > 9),
+                                  'active': (cat + 1) * categories[0].options.length + row === file || col + (mCategory * categories[0].options.length) === column,
+                                  'selected': selecteds[(cat + 1) * categories[0].options.length + row] && selecteds[(cat + 1) * categories[0].options.length + row][col + (mCategory * categories[0].options.length)] || false,
+                                  'notHere': empties[(cat + 1) * categories[0].options.length + row] && empties[(cat + 1) * categories[0].options.length + row][col + (mCategory * categories[0].options.length)] || false
+                                }"
+                            >
+                              A
+                            </td>
                           </tr>
                         </ng-container>
                       </ng-container>

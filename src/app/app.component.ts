@@ -16,6 +16,10 @@ export class AppComponent implements OnInit {
   categories:Array<Category> = [];
   id:number;
   text:string;
+  file:number;
+  column: number;
+  selecteds:object = {};
+  empties:object = {};
 
   constructor(private http: HttpClient) {}
 
@@ -29,7 +33,26 @@ export class AppComponent implements OnInit {
     });
   }
 
+  toggleActive(row:number, col:number):void {
+    if (!this.selecteds[row]) this.selecteds[row] = {};
+    if (this.selecteds[row][col]) {
+      this.selecteds[row][col] = !this.selecteds[row][col]
+    } else {
+      this.selecteds[row][col] = true;
+    }
+  }
+
+  toggleUnActive(row:number, col:number):void {
+    if (!this.empties[row]) this.empties[row] = {};
+    if (this.empties[row][col]) {
+      this.empties[row][col] = !this.empties[row][col]
+    } else {
+      this.empties[row][col] = true;
+    }
+  }
+
   moveOverCell(row:number, col:number):void {
-    console.log(row, col)
+    this.file = row;
+    this.column = col;
   }
 }
